@@ -1,50 +1,137 @@
+import React from 'react';
 import './AtariGo.css';
+import PropTypes from 'prop-types';
 
 const SIZE = 300;
-const LINE_COUNT = 9;
+const LINE_COUNT = 5;
 const GAP = SIZE / LINE_COUNT;
 const MARGIN = GAP / 2;
 const LINE_LENGTH = SIZE - GAP;
 const LINE_WIDTH = 2;
+const COLOR = {
+  EMPTY: 0,
+  BLACK: 1,
+  WHITE: 2
+};
 
 
-function AtariGo() {   
-  const getLinePositionByIndex = (i) => MARGIN  + i * GAP;
 
-  const horizontalLines = new Array(LINE_COUNT).fill(null).map(
-    (a, i) => <line 
-    className="line"
-    key={i} 
-    x1={MARGIN} 
-    x2={MARGIN + LINE_LENGTH } 
-    y1={getLinePositionByIndex(i)} 
-    y2={getLinePositionByIndex(i)} 
-    strokeWidth={LINE_WIDTH} 
-    stroke="black"
-    />);
+class Intersection extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
-  const verticalLines = new Array(LINE_COUNT).fill(null).map(
-    (a, i) => <line 
-    className="line"
-    key={i} 
-    x1={getLinePositionByIndex(i)} 
-    x2={getLinePositionByIndex(i)} 
-    y1={MARGIN} 
-    y2={MARGIN + LINE_LENGTH } 
-    strokeWidth={LINE_WIDTH} 
-    stroke="black"
-    />);
+  render() {
+    let result;
+    if (this.props.intersectionData.color !== COLOR.EMPTY) {
+      result = <circle cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill={this.props.intersectionData.color === COLOR.BLACK ? 'black' : 'white' } />;
+    } else {
+      result = <circle onClick={() => this.props.onClick(this.props.coord)} cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill="transparent"/>;
+    }
+    return result; 
+  }
+  
+}
 
-  return (    
-    <svg version="1.1"
-      className="board"
-      width={SIZE}
-      height={SIZE}
-      xmlns="http://www.w3.org/2000/svg">
-      {horizontalLines}
-      {verticalLines}
-    </svg>
-  );
+Intersection.propTypes = {
+  intersectionData: PropTypes.object,
+  coord: PropTypes.array,
+  color: PropTypes.object,
+  onClick: PropTypes.func
+};
+
+class AtariGo extends React.Component {   
+  #whiteStone = {
+    color: COLOR.WHITE    
+  };
+  
+  #blackStone = {
+    color: COLOR.BLACK    
+  };
+  
+  #empty = {
+    color: COLOR.EMPTY
+  };
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      intersections: Array(LINE_COUNT * LINE_COUNT).fill(this.#empty),
+      isBlackTurn: true
+      };
+  }
+  
+  getLinePositionByIndex(i) {
+    return MARGIN  + i * GAP;
+  } 
+
+  getCoord(i) {
+    const x = i % LINE_COUNT;
+    const y = (i - x) / LINE_COUNT;
+    return [x, y];
+  }
+
+  #getIntersectionIndex([x, y]) {
+    return y * LINE_COUNT + x;
+  }
+
+  handleClick(coord) {
+    const intersectionIndex = this.#getIntersectionIndex(coord);
+    console.log(coord);
+    this.setState({
+      intersections: this.state.intersections.map((intersection, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? COLOR.BLACK : COLOR.WHITE}: intersection),
+      isBlackTurn: !this.state.isBlackTurn
+    });
+
+  }
+
+  #renderIntersection(i, intersectionData) {
+    return <Intersection onClick={(intersectionData) => this.handleClick(intersectionData)} key={i} coord={this.getCoord(i)} intersectionData={intersectionData} />;
+  }
+
+  render() {
+    const horizontalLines = new Array(LINE_COUNT).fill(null).map(
+      (a, i) => <line 
+      className="line"
+      key={i} 
+      x1={MARGIN} 
+      x2={MARGIN + LINE_LENGTH } 
+      y1={this.getLinePositionByIndex(i)} 
+      y2={this.getLinePositionByIndex(i)} 
+      strokeWidth={LINE_WIDTH} 
+      stroke="black"
+      />);
+  
+    const verticalLines = new Array(LINE_COUNT).fill(null).map(
+      (a, i) => <line 
+      className="line"
+      key={i} 
+      x1={this.getLinePositionByIndex(i)} 
+      x2={this.getLinePositionByIndex(i)} 
+      y1={MARGIN} 
+      y2={MARGIN + LINE_LENGTH } 
+      strokeWidth={LINE_WIDTH} 
+      stroke="black"
+      />);
+  
+    const intersections = this.state.intersections.map((intersectionData, i) => this.#renderIntersection(i, intersectionData));
+  
+    return (
+      <div className="atarigo">
+        <svg version="1.1"
+          className="atarigo-board"
+          width={SIZE}
+          height={SIZE}
+          xmlns="http://www.w3.org/2000/svg">
+          {horizontalLines}
+          {verticalLines}
+          {intersections}
+        </svg>
+        <div className='atarigo-info'>Następny ruch: czarny</div>
+      </div>    
+    );
+  }
+  
 }
 
 export {AtariGo};

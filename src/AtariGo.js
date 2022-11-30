@@ -1,6 +1,8 @@
 import React from 'react';
 import './AtariGo.css';
 import PropTypes from 'prop-types';
+import {getIntersectionIndex, isSuicide} from './helpers';
+import { COLOR } from './consts';
 
 const SIZE = 300;
 const LINE_COUNT = 5;
@@ -8,12 +10,6 @@ const GAP = SIZE / LINE_COUNT;
 const MARGIN = GAP / 2;
 const LINE_LENGTH = SIZE - GAP;
 const LINE_WIDTH = 2;
-const COLOR = {
-  EMPTY: 0,
-  BLACK: 1,
-  WHITE: 2
-};
-
 
 
 class Intersection extends React.Component {
@@ -71,18 +67,21 @@ class AtariGo extends React.Component {
     return [x, y];
   }
 
-  #getIntersectionIndex([x, y]) {
-    return y * LINE_COUNT + x;
+  #getCurrentColor() {
+    return this.state.isBlackTurn ? COLOR.BLACK : COLOR.WHITE;
   }
 
   handleClick(coord) {
-    const intersectionIndex = this.#getIntersectionIndex(coord);
-    console.log(coord);
-    this.setState({
-      intersections: this.state.intersections.map((intersection, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? COLOR.BLACK : COLOR.WHITE}: intersection),
-      isBlackTurn: !this.state.isBlackTurn
-    });
-
+    if (!isSuicide(coord, this.#getCurrentColor(), this.state.intersections)) {
+      const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
+    
+      this.setState({
+        intersections: this.state.intersections.map((intersection, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? COLOR.BLACK : COLOR.WHITE}: intersection),
+        isBlackTurn: !this.state.isBlackTurn
+      });
+    } else {
+      return null;
+    }
   }
 
   #renderIntersection(i, intersectionData) {

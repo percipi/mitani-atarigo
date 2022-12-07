@@ -37,18 +37,20 @@ class Intersection extends React.Component {
   
 }
 
-// Intersection.propTypes = {
-//   intersectionData: PropTypes.object,
-//   coord: PropTypes.array,
-//   color: PropTypes.object,
-//   onClick: PropTypes.func
-// };
+type IntersectionType = {
+  color: number;
+}
+
+type AtariGoState = {
+  intersections: Array<IntersectionType>,
+  isBlackTurn: boolean
+}
 
 class AtariGo extends React.Component {   
-  state: any;
+  state: AtariGoState;
 
   constructor(props) {
-    const empty = {
+    const empty: IntersectionType = {
       color: COLOR.EMPTY
     };
 
@@ -59,11 +61,11 @@ class AtariGo extends React.Component {
       };
   }
   
-  getLinePositionByIndex(i) {
+  getLinePositionByIndex(i: number) {
     return MARGIN  + i * GAP;
   } 
 
-  getCoord(i) {
+  getCoord(i: number) {
     const x = i % LINE_COUNT;
     const y = (i - x) / LINE_COUNT;
     return [x, y];
@@ -86,7 +88,7 @@ class AtariGo extends React.Component {
     }
   }
 
-  #renderIntersection(i, intersectionData) {
+  #renderIntersection(i: number, intersectionData) {
     return <Intersection onClick={(intersectionData) => this.handleClick(intersectionData)} key={i} coord={this.getCoord(i)} intersectionData={intersectionData} />;
   }
 
@@ -115,7 +117,7 @@ class AtariGo extends React.Component {
       stroke="black"
       />);
   
-    const intersections = this.state.intersections.map((intersectionData, i) => this.#renderIntersection(i, intersectionData));
+    const intersections = this.state.intersections.map((intersectionData: object, i) => this.#renderIntersection(i, intersectionData));
   
     return (
       <div className="atarigo">

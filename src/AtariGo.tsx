@@ -1,6 +1,6 @@
 import React from 'react';
 import './AtariGo.css';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import {getIntersectionIndex, isSuicide} from './helpers';
 import { COLOR } from './consts';
 
@@ -13,14 +13,22 @@ const LINE_WIDTH = 2;
 
 
 class Intersection extends React.Component {
+  props: any;
+ 
   constructor(props) {
     super(props);
+    
   }
 
   render() {
     let result;
     if (this.props.intersectionData.color !== COLOR.EMPTY) {
-      result = <circle cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill={this.props.intersectionData.color === COLOR.BLACK ? 'black' : 'white' } />;
+      result = <circle
+        // cx={MARGIN + this.props.coord[0] * GAP} 
+        // cy={MARGIN + this.props.coord[1] * GAP} 
+        // r={GAP/2} 
+        // fill={this.props.intersectionData.color === COLOR.BLACK ? 'black' : 'white' } 
+      />;
     } else {
       result = <circle onClick={() => this.props.onClick(this.props.coord)} cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill="transparent"/>;
     }
@@ -29,30 +37,24 @@ class Intersection extends React.Component {
   
 }
 
-Intersection.propTypes = {
-  intersectionData: PropTypes.object,
-  coord: PropTypes.array,
-  color: PropTypes.object,
-  onClick: PropTypes.func
-};
+// Intersection.propTypes = {
+//   intersectionData: PropTypes.object,
+//   coord: PropTypes.array,
+//   color: PropTypes.object,
+//   onClick: PropTypes.func
+// };
 
 class AtariGo extends React.Component {   
-  #whiteStone = {
-    color: COLOR.WHITE    
-  };
-  
-  #blackStone = {
-    color: COLOR.BLACK    
-  };
-  
-  #empty = {
-    color: COLOR.EMPTY
-  };
-  
+  state: any;
+
   constructor(props) {
+    const empty = {
+      color: COLOR.EMPTY
+    };
+
     super(props);
     this.state = {
-      intersections: Array(LINE_COUNT * LINE_COUNT).fill(this.#empty),
+      intersections: Array(LINE_COUNT * LINE_COUNT).fill(empty),
       isBlackTurn: true
       };
   }

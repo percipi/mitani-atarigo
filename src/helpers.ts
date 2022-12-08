@@ -1,4 +1,8 @@
- // @ts-check
+type Coord = string[];
+
+type IntersectionType = {
+    color: number;
+  }
 
 import {COLOR} from './consts.js';
 
@@ -155,7 +159,8 @@ function getNeighbours(moveCoord, intersections) {
   return neig;
 }
 
-function hasEmptyNeighbour(moveCoord, intersections) {
+
+function hasEmptyNeighbour(moveCoord: Coord, intersections: IntersectionType[]) {
   var neighbours = getNeighbours(moveCoord, intersections),
       res = [];
   ////console.log("Neighbours length: ", neighbours.length);

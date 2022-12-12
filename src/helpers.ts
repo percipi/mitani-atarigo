@@ -1,9 +1,10 @@
-import type {Intersections, Coord} from './AtariGo';
+import type {Intersections, Coord, IntersectionData} from './AtariGo';
 
 import {Color} from './consts.js';
 
-function getOppColor(color) {
-  if (color === Color.BLACK) {
+function getOppColor(color: Color): Color | -1{
+  // TODO throw error if not stone
+    if (color === Color.BLACK) {
       return Color.WHITE;
   }
   else if (color === Color.WHITE) {
@@ -12,7 +13,7 @@ function getOppColor(color) {
   return -1;
 }
 
-function isMokuInArray(el, arr) {
+function isMokuInArray(el: IntersectionData, arr: Intersections) {
   for (var i = 0; i < arr.length; i++) {
       if ((el.x === arr[i].x) && (el.y === arr[i].y)) {
           return true;
@@ -79,9 +80,9 @@ function getGroup(moku) {
 }
 
 //returns array of groups which contains stones passed as argument
-function getGroupsForStones(stones) {  
+function getGroupsForStones(stones: Intersections): Intersections[]{  
   var _alreadyInGroup = [];
-  var groups = [];
+  var groups: Intersections[] = [];
   for (var i = 0; i < stones.length; i++) {
       if (!isMokuInArray(stones[i], _alreadyInGroup)) {
           var group = getGroup(stones[i]);
@@ -96,7 +97,7 @@ function getGroupsForStones(stones) {
   return groups;
 }
 
-function getCapturedGroups(coord, color, intersections) {
+function getCapturedGroups(coord: Coord, color: Color, intersections: Intersections) {
   var oppColor = getOppColor(color);
     //moku = intersections[getIntersectionIndex([x,y])];
   let groups = getGroupsForStones(intersections);
@@ -117,12 +118,12 @@ function getCapturedGroups(coord, color, intersections) {
   }
 }
 
-function getIntersectionIndex([x, y], boardSize) {
+function getIntersectionIndex([x, y]: Coord, boardSize: number): number {
   return y * boardSize + x;
 }
 
-function getValue([x,y], intersections) {
-  const boardSize = Math.sqrt(intersections.length);
+function getValue([x,y]: Coord, intersections: Intersections): Color | -1 {
+  const boardSize: number = Math.sqrt(intersections.length);
 
   if ((x >= 0) && (y >= 0) && (x < boardSize) && (y < boardSize)) {
       return intersections[getIntersectionIndex([x,y], boardSize)].color;
@@ -130,13 +131,15 @@ function getValue([x,y], intersections) {
   return -1;
 }
 
-function getNeighbours(moveCoord, intersections) {
-  var neig = [],x,y, val;
-  x = moveCoord[0];
-  y = moveCoord[1];
-  const boardSize = Math.sqrt(intersections.length);
-  const getIntersectionIndexForBoard = (coord) => getIntersectionIndex(coord, boardSize);
-    val = getValue([x, y - 1], intersections);
+function getNeighbours(moveCoord: Coord, intersections: Intersections): Intersections {
+  const neig: Intersections = [],
+  x = moveCoord[0],
+  y = moveCoord[1],
+  boardSize = Math.sqrt(intersections.length),
+  getIntersectionIndexForBoard = (coord: Coord): number => getIntersectionIndex(coord, boardSize);
+
+  let val = getValue([x, y - 1], intersections);
+
   if (val !== -1) {
       neig.push(intersections[getIntersectionIndexForBoard([x, y-1])]);
   }

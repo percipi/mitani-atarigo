@@ -5,7 +5,7 @@ import {Intersection} from './Intersection';
 import {getIntersectionIndex, isSuicide} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
-type IntersectionData = {
+export type IntersectionData = {
   color: number;
 }
 

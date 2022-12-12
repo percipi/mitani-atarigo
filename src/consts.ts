@@ -1,10 +1,10 @@
-// const COLOR: {EMPTY: 0, BLACK: 1, WHITE: 2} = {
+// const Color: {EMPTY: 0, BLACK: 1, WHITE: 2} = {
 //   EMPTY: 0,
 //   BLACK: 1,
 //   WHITE: 2
 // };
 
-enum COLOR {
+enum Color {
   EMPTY,
   BLACK,
   WHITE
@@ -17,4 +17,4 @@ const MARGIN = GAP / 2;
 const LINE_LENGTH = SIZE - GAP;
 const LINE_WIDTH = 2;
 
-export {COLOR, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE};
+export {Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE};

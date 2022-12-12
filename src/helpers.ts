@@ -7,14 +7,14 @@ type IntersectionType = {
     color: number;
   }
 
-import {COLOR} from './consts.js';
+import {Color} from './consts.js';
 
 function getOppColor(color) {
-  if (color === COLOR.BLACK) {
-      return COLOR.WHITE;
+  if (color === Color.BLACK) {
+      return Color.WHITE;
   }
-  else if (color === COLOR.WHITE) {
-      return COLOR.BLACK;
+  else if (color === Color.WHITE) {
+      return Color.BLACK;
   }
   return -1;
 }
@@ -170,14 +170,14 @@ function hasEmptyNeighbour(moveCoord: Coord, intersections: IntersectionType[]) 
   for (var i = 0; i < neighbours.length; i++) {
       ////console.log("Neighbours color: ", neighbours[i].val);
       ////console.log("Stones color: ", moku.val);
-      if (neighbours[i].val === COLOR.EMPTY) {
+      if (neighbours[i].val === Color.EMPTY) {
           res.push(neighbours[i]);
       }
   }
   return res;
 }
 
-function isSuicide(moveCoord: Coord, color, intersections) {
+function isSuicide(moveCoord: Coord, color: Color, intersections: Intersections) {
   if ((hasEmptyNeighbour(moveCoord, intersections).length !== 0) || getCapturedGroups(moveCoord, color, intersections).length !== 0) {
       return false;
   }

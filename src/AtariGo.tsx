@@ -1,55 +1,31 @@
 import React from 'react';
 import './AtariGo.css';
-// import PropTypes from 'prop-types';
+
+import {Intersection} from './Intersection';
 import {getIntersectionIndex, isSuicide} from './helpers';
-import { COLOR } from './consts';
+import { COLOR, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
-const SIZE = 300;
-const LINE_COUNT = 5;
-const GAP = SIZE / LINE_COUNT;
-const MARGIN = GAP / 2;
-const LINE_LENGTH = SIZE - GAP;
-const LINE_WIDTH = 2;
-
-
-class Intersection extends React.Component {
-  props: any;
- 
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let result;
-    if (this.props.intersectionData.color !== COLOR.EMPTY) {
-      result = <circle
-        // cx={MARGIN + this.props.coord[0] * GAP} 
-        // cy={MARGIN + this.props.coord[1] * GAP} 
-        // r={GAP/2} 
-        // fill={this.props.intersectionData.color === COLOR.BLACK ? 'black' : 'white' } 
-      />;
-    } else {
-      result = <circle onClick={() => this.props.onClick(this.props.coord)} cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill="transparent"/>;
-    }
-    return result; 
-  }
-  
-}
-
-type IntersectionType = {
+type IntersectionData = {
   color: number;
 }
 
 type AtariGoState = {
-  intersections: Array<IntersectionType>,
+  intersections: Array<IntersectionData>,
   isBlackTurn: boolean
 }
 
+type Coord = [
+  number,
+  number
+];
+
+type StoneColor = 0 | 1 | 2;
+
 class AtariGo extends React.Component {   
-  state: AtariGoState;
+  readonly state: AtariGoState;
 
   constructor(props) {
-    const empty: IntersectionType = {
+    const empty: IntersectionData = {
       color: COLOR.EMPTY
     };
 
@@ -60,21 +36,25 @@ class AtariGo extends React.Component {
       };
   }
   
-  getLinePositionByIndex(i: number) {
+/**
+ * Returns line position in pixels on x or y axis.
+ */
+
+  getLinePositionByIndex(i: number): number{
     return MARGIN  + i * GAP;
   } 
 
-  getCoord(i: number) {
+  getCoord(i: number): Coord {
     const x = i % LINE_COUNT;
     const y = (i - x) / LINE_COUNT;
     return [x, y];
   }
 
-  #getCurrentColor() {
+  #getCurrentColor(): StoneColor {
     return this.state.isBlackTurn ? COLOR.BLACK : COLOR.WHITE;
   }
 
-  handleClick(coord) {
+  handleClick(this: AtariGo, coord: Coord) {
     if (!isSuicide(coord, this.#getCurrentColor(), this.state.intersections)) {
       const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
     
@@ -116,18 +96,20 @@ class AtariGo extends React.Component {
       stroke="black"
       />);
   
-    const intersections = this.state.intersections.map((intersectionData: object, i) => this.#renderIntersection(i, intersectionData));
+    const intersections = this.state.intersections.map((coord , i) => this.#renderIntersection(i, coord));
   
     return (
       <div className="atarigo">
-        <svg version="1.1"
+        <svg 
+          version="1.1"
           className="atarigo-board"
           width={SIZE}
           height={SIZE}
-          xmlns="http://www.w3.org/2000/svg">
-          {horizontalLines}
-          {verticalLines}
-          {intersections}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+        {horizontalLines}
+        {verticalLines}
+        {intersections}
         </svg>
         <div className='atarigo-info'>Następny ruch: czarny</div>
       </div>    

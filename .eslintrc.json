@@ -21,7 +21,10 @@
     "quotes": [
       "error",
       "single"
-    ]
+    ],
+    "no-undef": [
+      "off"]
+    
   },
   "settings": {
     "react": {

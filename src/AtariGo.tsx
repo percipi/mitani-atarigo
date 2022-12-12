@@ -9,14 +9,14 @@ type IntersectionData = {
   color: number;
 }
 
-type Intersections = Array<IntersectionData>;
+export type Intersections = Array<IntersectionData>;
 
 type AtariGoState = {
   intersections: Intersections,
   isBlackTurn: boolean
 }
 
-type Coord = [
+export type Coord = [
   number,
   number
 ];

@@ -1,11 +1,4 @@
-type Coord = [
-    number,
-    number
-  ];
-
-type IntersectionType = {
-    color: number;
-  }
+import type {Intersections, Coord} from './AtariGo';
 
 import {Color} from './consts.js';
 
@@ -163,7 +156,7 @@ function getNeighbours(moveCoord, intersections) {
 }
 
 
-function hasEmptyNeighbour(moveCoord: Coord, intersections: IntersectionType[]) {
+function hasEmptyNeighbour(moveCoord: Coord, intersections: Intersections) {
   var neighbours = getNeighbours(moveCoord, intersections),
       res = [];
   ////console.log("Neighbours length: ", neighbours.length);

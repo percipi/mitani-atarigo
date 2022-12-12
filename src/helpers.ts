@@ -1,4 +1,7 @@
-type Coord = string[];
+type Coord = [
+    number,
+    number
+  ];
 
 type IntersectionType = {
     color: number;
@@ -174,7 +177,7 @@ function hasEmptyNeighbour(moveCoord: Coord, intersections: IntersectionType[]) 
   return res;
 }
 
-function isSuicide(moveCoord, color, intersections) {
+function isSuicide(moveCoord: Coord, color, intersections) {
   if ((hasEmptyNeighbour(moveCoord, intersections).length !== 0) || getCapturedGroups(moveCoord, color, intersections).length !== 0) {
       return false;
   }

@@ -1,7 +1,13 @@
-const COLOR: {EMPTY: 0, BLACK: 1, WHITE: 2} = {
-  EMPTY: 0,
-  BLACK: 1,
-  WHITE: 2
+// const COLOR: {EMPTY: 0, BLACK: 1, WHITE: 2} = {
+//   EMPTY: 0,
+//   BLACK: 1,
+//   WHITE: 2
+// };
+
+enum COLOR {
+  EMPTY,
+  BLACK,
+  WHITE
 };
 
 const SIZE = 300;

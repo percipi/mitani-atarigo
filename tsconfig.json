@@ -2,9 +2,8 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react",
-    "target": "ES2015"
-    //,
-    //"strictNullChecks": true,
-    //"strictPropertyInitialization": true
+    "target": "ES2015",
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
   }
 }

@@ -12,7 +12,7 @@ export type IntersectionData = {
 export type Intersections = Array<IntersectionData>;
 
 type AtariGoState = {
-  intersections: Intersections,
+  board: Intersections,
   isBlackTurn: boolean
 }
 
@@ -33,7 +33,7 @@ class AtariGo extends React.Component {
 
     super(props);
     this.state = {
-      intersections: Array(LINE_COUNT * LINE_COUNT).fill(empty),
+      board: Array(LINE_COUNT * LINE_COUNT).fill(empty),
       isBlackTurn: true
       };
   }
@@ -57,11 +57,11 @@ class AtariGo extends React.Component {
   }
 
   handleClick(this: AtariGo, coord: Coord) {
-    if (!isSuicide(coord, this.#getCurrentColor(), this.state.intersections)) {
+    if (!isSuicide(coord, this.#getCurrentColor(), this.state.board)) {
       const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
     
       this.setState({
-        intersections: this.state.intersections.map((intersection, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? Color.BLACK : Color.WHITE}: intersection),
+        board: this.state.board.map((intersection, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? Color.BLACK : Color.WHITE}: intersection),
         isBlackTurn: !this.state.isBlackTurn
       });
     } else {
@@ -98,7 +98,7 @@ class AtariGo extends React.Component {
       stroke="black"
       />);
   
-    const intersections = this.state.intersections.map((coord , i) => this.#renderIntersection(i, coord));
+    const board = this.state.board.map((coord , i) => this.#renderIntersection(i, coord));
   
     return (
       <div className="atarigo">
@@ -111,7 +111,7 @@ class AtariGo extends React.Component {
         >
         {horizontalLines}
         {verticalLines}
-        {intersections}
+        {board}
         </svg>
         <div className='atarigo-info'>Następny ruch: czarny</div>
       </div>    

@@ -5,8 +5,10 @@ import {Intersection} from './Intersection';
 import {getIntersectionIndex, isSuicide} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
+type StoneColor = 0 | 1 | 2;
+
 export type IntersectionData = {
-  color: number;
+  color: StoneColor;
 }
 
 export type Intersections = Array<IntersectionData>;
@@ -20,8 +22,6 @@ export type Coord = [
   number,
   number
 ];
-
-type StoneColor = 0 | 1 | 2;
 
 class AtariGo extends React.Component {   
   readonly state: AtariGoState;
@@ -56,7 +56,7 @@ class AtariGo extends React.Component {
     return this.state.isBlackTurn ? Color.BLACK : Color.WHITE;
   }
 
-  handleClick(this: AtariGo, coord: Coord) {
+  putStone(this: AtariGo, coord: Coord) {
     if (!isSuicide(coord, this.#getCurrentColor(), this.state.board)) {
       const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
     
@@ -70,7 +70,7 @@ class AtariGo extends React.Component {
   }
 
   #renderIntersection(i: number, intersectionData) {
-    return <Intersection onClick={(intersectionData) => this.handleClick(intersectionData)} key={i} coord={this.getCoord(i)} intersectionData={intersectionData} />;
+    return <Intersection onClick={(coord) => this.putStone(coord)} key={i} coord={this.getCoord(i)} intersectionData={intersectionData} />;
   }
 
   render() {

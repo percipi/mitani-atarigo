@@ -1,5 +1,5 @@
-import type {Intersections, Coord} from './AtariGo';
-import {Color} from './consts';
+import type {Intersections, Coord, IntersectionData} from './AtariGo';
+import {Color, SIZE} from './consts';
 
 // function getOppColor(color: Color): Color | -1{
 //   // TODO throw error if not stone
@@ -26,17 +26,24 @@ import {Color} from './consts';
 //   this.liberties = liberties;
 // }
 
-// function ownStonesNextTo(x,y,color) {
-//   var moku,n, r=[];
-//   moku = this.board[y][x];
-//   n = moku.neighbors;
-//   for (var i = 0; i< n.length; i++){
-//       if (color === n[i].val){
-//           r.push(n[i]);
+function ownStonesNextTo(coord, color, board): Coord[] {
+  let r: IntersectionData[] = [];
+
+ // let moku = board[getIntersectionIndex(coord, SIZE)];
+  let neighbours = getNeighbourCoordsGroupedByColor(coord, board);
+//   neighbours.forEach((neighbour) => {
+//     if (neighbour.color === color) {
+//         r.push(neighbour);
+//     }
+// }
+//     );
+//   for (var i = 0; i< neighbours.length; i++){
+//       if (color === neighbours[i].color){
+//           r.push(neighbours[i]);
 //       }
 //   }
-//   return r;
-// }
+  return neighbours[color];
+}
 
 // function getNoGroupLiberties(group) {
 //   let lib, res = [];
@@ -130,61 +137,57 @@ function getIntersectionColorByCoord([x,y]: Coord, board: Intersections): Color 
   return -1;
 }
 
-function getNeighbours(moveCoord: Coord, board: Intersections): Intersections {
-  const neig: Intersections = [],
+// return neighbours by color
+// write unit tests
+function getNeighbourCoordsGroupedByColor(moveCoord: Coord, board: Intersections): Coord[][] {
+  const result: Coord[][]= [[],[],[]],
   x = moveCoord[0],
   y = moveCoord[1],
   boardSize = Math.sqrt(board.length),
   getIntersectionIndexForBoard = (coord: Coord): number => getIntersectionIndex(coord, boardSize);
+  const coordsOfNeighbours: Coord[] = [[x, y-1], [x+1, y], [x, y+1], [x+1, y+1]];
 
-  let val = getIntersectionColorByCoord([x, y - 1], board);
+  coordsOfNeighbours.forEach((coord: Coord) => {
+    let color = getIntersectionColorByCoord(coord, board);
+    if (color !== -1) {
+      result[color].push(coord);
+    }
+  });
 
-  if (val !== -1) {
-      neig.push(board[getIntersectionIndexForBoard([x, y-1])]);
-  }
-  val = getIntersectionColorByCoord([x + 1, y], board);
-  if (val !== -1) {
-      neig.push(board[getIntersectionIndexForBoard([x+1, y])]);
-  }
-  val = getIntersectionColorByCoord([x, y + 1], board);
-  if (val !== -1) {
-      neig.push(board[getIntersectionIndexForBoard([x, y+1])]);
-  }
-  val = getIntersectionColorByCoord([x - 1, y], board);
-  if (val !== -1) {
-      neig.push(board[getIntersectionIndexForBoard([x-1, y])]);
-  }
-  return neig;
+  return result;
 }
 
 
-function getEmptyNeighbourIntersectionDatas(moveCoord: Coord, board: Intersections): Intersections {
-  var neighbours = getNeighbours(moveCoord, board),
+const hasEmptyNeighbour = (moveCoord, board) => getCoordsOfEmptyNeighbours(moveCoord, board).length !== 0;
+
+function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Intersections): Coord[] {
+  var neighbours = getNeighbourCoordsGroupedByColor(moveCoord, board),
       res: Intersections = [];
   ////console.log("Neighbours length: ", neighbours.length);
-  for (var i = 0; i < neighbours.length; i++) {
-      ////console.log("Neighbours color: ", neighbours[i].val);
-      ////console.log("Stones color: ", moku.val);
-      if (neighbours[i].color === Color.EMPTY) {
-          res.push(neighbours[i]);
-      }
-  }
-  return res;
+//   for (var i = 0; i < neighbours.length; i++) {
+//       ////console.log("Neighbours color: ", neighbours[i].val);
+//       ////console.log("Stones color: ", moku.val);
+//       if (neighbours[i].color === Color.EMPTY) {
+//           res.push(neighbours[i]);
+//       }
+//   }
+//   return res;
+return neighbours[Color.EMPTY];
 }
 
 function isSuicide(moveCoord: Coord, color: Color, board: Intersections) {
-  if ((getEmptyNeighbourIntersectionDatas(moveCoord, board).length !== 0) 
+  if (hasEmptyNeighbour(moveCoord, board) 
   //|| getCapturedGroups(moveCoord, color, board).length !== 0
   ) {
       return false;
   }
   else {
-      var ownStones = this.ownStonesNextTo(moveCoord, color);
-      for (var i = 0; i<ownStones.length; i++){//uzyc getAdj groups!!
-          if (ownStones[i].group.liberties > 1) return false; //TODO nie sprawdza czy grupy nie maja wspolnego oddechu
-      }
+      let ownStones = ownStonesNextTo(moveCoord, color, board);
+    //   for (var i = 0; i<ownStones.length; i++){//uzyc getAdj groups!!
+    //       if (ownStones[i].group.liberties > 1) return false; //TODO nie sprawdza czy grupy nie maja wspolnego oddechu
+    //   }
   }
   return true;
 }
 
-export {getIntersectionIndex, isSuicide};
+export {getIntersectionIndex, isSuicide, getNeighbourCoordsGroupedByColor};

@@ -1,8 +1,13 @@
 import React from 'react';
+import type { Coord, IntersectionData } from './AtariGo';
 import {Color, MARGIN, GAP} from './consts';
 
 class Intersection extends React.Component {
-  props: any;
+  props!: {
+    intersectionData: IntersectionData,
+    coord: Coord,
+    onClick: Function
+  };
  
   constructor(props) {
     super(props);

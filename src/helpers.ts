@@ -1,4 +1,4 @@
-import type {Intersections, Coord, IntersectionData} from './AtariGo';
+import type {Intersections, Coord, StoneColor} from './AtariGo';
 import {Color, SIZE} from './consts';
 
 // function getOppColor(color: Color): Color | -1{
@@ -27,7 +27,7 @@ function Group(stones, liberties) {
 }
 
 function getOwnNeighours(coord, color, board): Coord[] {
-  let r: IntersectionData[] = [];
+  let r: StoneColor[] = [];
 
  // let moku = board[getIntersectionIndex(coord, SIZE)];
   let neighbours = getNeighbourCoordsGroupedByColor(coord, board);
@@ -132,7 +132,7 @@ function getIntersectionColorByCoord([x,y]: Coord, board: Intersections): Color 
   const boardSize: number = Math.sqrt(board.length);
 
   if ((x >= 0) && (y >= 0) && (x < boardSize) && (y < boardSize)) {
-      return board[getIntersectionIndex([x,y], boardSize)].color;
+      return board[getIntersectionIndex([x,y], boardSize)];
   }
   return -1;
 }

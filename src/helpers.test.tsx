@@ -15,11 +15,11 @@ import { getNeighbourCoordsGroupedByColor, isSuicide } from "./helpers"
  * 01
  */
 
+const {EMPTY, BLACK, WHITE} = Color;
+
 const board1 = [
-  {color: Color.BLACK},
-  {color: Color.EMPTY},
-  {color: Color.EMPTY},
-  {color: Color.BLACK}
+  BLACK, EMPTY,
+  EMPTY, BLACK
 ]
 
 /**
@@ -28,14 +28,12 @@ const board1 = [
  */
 
 const board2 = [
-  {color: Color.BLACK},
-  {color: Color.EMPTY},
-  {color: Color.EMPTY},
-  {color: Color.WHITE}
+  BLACK, EMPTY,
+  EMPTY, WHITE
 ]
 
 test('getNeighbourCoordsGroupedByColor returns empty result', () => {
-  const coordsOfNeighbours = getNeighbourCoordsGroupedByColor([0,0],[{color: Color.EMPTY}]);
+  const coordsOfNeighbours = getNeighbourCoordsGroupedByColor([0,0],[Color.EMPTY]);
   //expect(coordsOfNeighbours[Color.EMPTY].length).toBe(0);
   expect(coordsOfNeighbours[Color.BLACK].length).toBe(0);
   expect(coordsOfNeighbours[Color.WHITE].length).toBe(0);

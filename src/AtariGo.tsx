@@ -5,13 +5,9 @@ import {Intersection} from './Intersection';
 import {getIntersectionIndex, isSuicide} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
-type StoneColor = 0 | 1 | 2;
+export type StoneColor = Color.EMPTY | Color.BLACK | Color.WHITE;
 
-export type IntersectionData = {
-  color: StoneColor;
-}
-
-export type Intersections = Array<IntersectionData>;
+export type Intersections = Array<StoneColor>;
 
 type AtariGoState = {
   board: Intersections,
@@ -27,13 +23,9 @@ class AtariGo extends React.Component {
   readonly state: AtariGoState;
 
   constructor(props) {
-    const empty: IntersectionData = {
-      color: Color.EMPTY
-    };
-
     super(props);
     this.state = {
-      board: Array(LINE_COUNT * LINE_COUNT).fill(empty),
+      board: Array(LINE_COUNT * LINE_COUNT).fill(Color.EMPTY),
       isBlackTurn: true
       };
   }

@@ -1,10 +1,10 @@
 import React from 'react';
-import type { Coord, IntersectionData } from './AtariGo';
+import type { Coord, StoneColor } from './AtariGo';
 import {Color, MARGIN, GAP} from './consts';
 
 class Intersection extends React.Component {
   props!: {
-    intersectionData: IntersectionData,
+    color: StoneColor,
     coord: Coord,
     onClick: Function
   };
@@ -15,12 +15,12 @@ class Intersection extends React.Component {
 
   render() {
     let result;
-    if (this.props.intersectionData.color !== Color.EMPTY) {
+    if (this.props.color !== Color.EMPTY) {
       result = <circle
         cx={MARGIN + this.props.coord[0] * GAP} 
         cy={MARGIN + this.props.coord[1] * GAP} 
         r={GAP/2} 
-        fill={this.props.intersectionData.color === Color.BLACK ? 'black' : 'white' } 
+        fill={this.props.color === Color.BLACK ? 'black' : 'white' } 
       />;
     } else {
       result = <circle onClick={() => this.props.onClick(this.props.coord)} cx={MARGIN + this.props.coord[0] * GAP} cy={MARGIN + this.props.coord[1] * GAP} r={GAP/2} fill="transparent"/>;

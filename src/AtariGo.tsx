@@ -61,8 +61,8 @@ class AtariGo extends React.Component {
     }
   }
 
-  #renderIntersection(i: number, intersectionData) {
-    return <Intersection onClick={(coord) => this.putStone(coord)} key={i} coord={this.getCoord(i)} intersectionData={intersectionData} />;
+  #renderIntersection(i: number, color: StoneColor) {
+    return <Intersection onClick={(coord) => this.putStone(coord)} key={i} coord={this.getCoord(i)} color={color} />;
   }
 
   render() {
@@ -90,7 +90,7 @@ class AtariGo extends React.Component {
       stroke="black"
       />);
   
-    const board = this.state.board.map((coord , i) => this.#renderIntersection(i, coord));
+    const board = this.state.board.map((color , i) => this.#renderIntersection(i, color));
   
     return (
       <div className="atarigo">

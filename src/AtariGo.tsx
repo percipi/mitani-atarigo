@@ -53,7 +53,7 @@ class AtariGo extends React.Component {
       const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
     
       this.setState({
-        board: this.state.board.map((coord, i)=> (i === intersectionIndex) ? {color: this.state.isBlackTurn ? Color.BLACK : Color.WHITE}: coord),
+        board: this.state.board.map((coord, i)=> (i === intersectionIndex) ? this.state.isBlackTurn ? Color.BLACK : Color.WHITE: coord),
         isBlackTurn: !this.state.isBlackTurn
       });
     } else {

@@ -1,10 +1,10 @@
 import React from 'react';
-import type { Coord, StoneColor } from './AtariGo';
+import type { Coord, ColorType } from './AtariGo';
 import {Color, MARGIN, GAP} from './consts';
 
 class Intersection extends React.Component {
   props!: {
-    color: StoneColor,
+    color: ColorType,
     coord: Coord,
     onClick: Function
   };

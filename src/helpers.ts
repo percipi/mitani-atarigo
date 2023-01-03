@@ -85,9 +85,9 @@ function getGroup(coord: Coord, board: ColorType[]): ColorType[] {
 }
 
 //returns array of groups which contains stones passed as argument
-function getGroupsForStones(stones: Coord[], board: Color[]): Color[][]{  
+function getGroupsForStones(stones: Coord[], board: Color[]): Coord[][]{  
   var _alreadyInGroup = [];
-  var groups: Color[][] = [];
+  var groups: Coord[][] = [];
   for (var i = 0; i < stones.length; i++) {
       if (!isMokuInArray(stones[i], _alreadyInGroup)) {
           var group = getGroup(stones[i], board);
@@ -174,6 +174,10 @@ function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Color[]): Coord[] {
 return neighbours[Color.EMPTY];
 }
 
+const getNeighbourCoordsForGroup = () => {
+  
+}
+
 function isSuicide(moveCoord: Coord, color: Color, board: Color[]) {
   if (hasEmptyNeighbour(moveCoord, board) 
   //|| getCapturedGroups(moveCoord, color, board).length !== 0
@@ -182,9 +186,14 @@ function isSuicide(moveCoord: Coord, color: Color, board: Color[]) {
   }
   else {
       let ownNeighbours = getOwnNeighours(moveCoord, color, board);
-      for (var i = 0; i<ownNeighbours.length; i++){//uzyc getAdj groups!!
-       //   if (ownNeighbours[i].group.liberties > 1) return false; //TODO nie sprawdza czy grupy nie maja wspolnego oddechu
-      }
+      const groups = getGroupsForStones(ownNeighbours, board);
+      let result = true;
+      groups.forEach((group) => {
+        if (getNeighbourCoordsForGroup()[Color.EMPTY].length < 1) {
+          result = false;
+        }
+      });
+      return result;
   }
   return true;
 }

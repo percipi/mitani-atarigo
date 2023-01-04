@@ -12,19 +12,19 @@ import {Color, SIZE} from './consts';
 //   return -1;
 // }
 
-function isMokuInArray(el: IntersectionData, arr: Color[]) {
+function isCoordInArray(el: Coord, arr: Coord[]) { // omega
   for (var i = 0; i < arr.length; i++) {
-      if ((el.x === arr[i].x) && (el.y === arr[i].y)) {
+      if ((el[0] === arr[i][0]) && (el[1] === arr[i][1])) {
           return true;
       }
   }
   return false;
 }
 
-function getOwnNeighours(coord, color, board): Coord[] {
+function getOwnNeighourCoords(coord, color, board): Coord[] {
   let r: ColorType[] = [];
 
- // let moku = board[getIntersectionIndex(coord, SIZE)];
+ // let moku = board[getCoordIndexInArray(coord, SIZE)];
   let neighbours = getNeighbourCoordsGroupedByColor(coord, board);
 //   neighbours.forEach((neighbour) => {
 //     if (neighbour.color === color) {
@@ -40,39 +40,39 @@ function getOwnNeighours(coord, color, board): Coord[] {
   return neighbours[color];
 }
 
-function getNoGroupLiberties(group) {
-  let lib, res = [];
-  for (var i = 0; i < group.stones.length; i++) {
-      lib = getEmptyNeighbourIntersectionDatas(group.stones[i]);
-      for (var j = 0; j < lib.length; j++) {
-          if (!isMokuInArray(lib[j], res)) {
-              //TODO bardzo nieladnie ale chce sprawdzic czy dziala
-              //zamiast tego stworzyc obiekt boardAnalyzer
-              if (!isMokuInArray(lib[j], group.stones)) {
-                  res.push(lib[j]);
-              }
+// function getNoGroupLiberties(group) {
+//   let lib, res = [];
+//   for (var i = 0; i < group.stones.length; i++) {
+//       lib = getEmptyNeighbourIntersectionDatas(group.stones[i]);
+//       for (var j = 0; j < lib.length; j++) {
+//           if (!isCoordInArray(lib[j], res)) {
+//               //TODO bardzo nieladnie ale chce sprawdzic czy dziala
+//               //zamiast tego stworzyc obiekt boardAnalyzer
+//               if (!isCoordInArray(lib[j], group.stones)) {
+//                   res.push(lib[j]);
+//               }
 
-          }
-      }
-  }
-  return res.length;
-}
+//           }
+//       }
+//   }
+//   return res.length;
+// }
 
 const getBoardSize = (board) => Math.sqrt(board.length);
 
-const getColorByCoord = (coord, board) => board[getIntersectionIndex(coord, getBoardSize(board))]
+const getColorByCoord = (coord, board) => board[getCoordIndexInArray(coord, getBoardSize(board))];
 
-function getGroup(coord: Coord, board: ColorType[]): ColorType[] {
+function getGroup(coord: Coord, board: ColorType[]): Coord[] {
   ////console.log("getGroup...");
   var _alreadyChecked = [],
       addNeighbours = function (coord, alreadyChecked) {
           ////console.log("addNeighbours... for stone:", moku);
           alreadyChecked.push(coord);
           var res = [coord];
-          var n = getOwnNeighours(coord, getColorByCoord(coord, board), board);
-          ////console.log("addNeighbours... getOwnNeighours:", n);
+          var n = getOwnNeighourCoords(coord, getColorByCoord(coord, board), board);
+          ////console.log("addNeighbours... getOwnNeighourCoords:", n);
           for (var i = 0; i < n.length; i++) {
-              if (!isMokuInArray(n[i], alreadyChecked)) {
+              if (!isCoordInArray(n[i], alreadyChecked)) {
                   res = res.concat(addNeighbours(n[i], alreadyChecked));
               }
           }
@@ -85,17 +85,14 @@ function getGroup(coord: Coord, board: ColorType[]): ColorType[] {
 }
 
 //returns array of groups which contains stones passed as argument
-function getGroupsForStones(stones: Coord[], board: Color[]): Coord[][]{  
-  var _alreadyInGroup = [];
+function getGroupsForStones(coords: Coord[], board: Color[]): Coord[][]{  
+  var _alreadyInGroups: Coord[] = [];
   var groups: Coord[][] = [];
-  for (var i = 0; i < stones.length; i++) {
-      if (!isMokuInArray(stones[i], _alreadyInGroup)) {
-          var group = getGroup(stones[i], board);
+  for (var i = 0; i < coords.length; i++) {
+      if (!isCoordInArray(coords[i], _alreadyInGroups)) {
+          var group = getGroup(coords[i], board);
           //create reference from stone to his group
-          for (var j=0; j<group.length; j++) {
-              groups[j] = group;    
-          }
-          _alreadyInGroup = _alreadyInGroup.concat(group.stones);
+          _alreadyInGroups = _alreadyInGroups.concat(...group);
           groups.push(group);
       }
   }
@@ -104,7 +101,7 @@ function getGroupsForStones(stones: Coord[], board: Color[]): Coord[][]{
 
 // function getCapturedGroups(coord: Coord, color: Color, board: Color[]): Color[][] {
 //   let oppColor = getOppColor(color);
-//     //moku = board[getIntersectionIndex([x,y])];
+//     //moku = board[getCoordIndexInArray([x,y])];
 //   let groups = getGroupsForStones(board);
 
 //   if (groups[oppColor].length === 0) {
@@ -123,7 +120,7 @@ function getGroupsForStones(stones: Coord[], board: Color[]): Coord[][]{
 //   }
 // }
 
-function getIntersectionIndex([x, y]: Coord, boardSize: number): number {
+function getCoordIndexInArray([x, y]: Coord, boardSize: number): number {
   return y * boardSize + x;
 }
 
@@ -131,7 +128,7 @@ function getIntersectionColorByCoord([x,y]: Coord, board: Color[]): Color | -1 {
   const boardSize: number = Math.sqrt(board.length);
 
   if ((x >= 0) && (y >= 0) && (x < boardSize) && (y < boardSize)) {
-      return board[getIntersectionIndex([x,y], boardSize)];
+      return board[getCoordIndexInArray([x,y], boardSize)];
   }
   return -1;
 }
@@ -143,7 +140,7 @@ function getNeighbourCoordsGroupedByColor(moveCoord: Coord, board: Color[]): Coo
   x = moveCoord[0],
   y = moveCoord[1];
   // boardSize = Math.sqrt(board.length);
-  //getIntersectionIndexForBoard = (coord: Coord): number => getIntersectionIndex(coord, boardSize);
+  //getIntersectionIndexForBoard = (coord: Coord): number => getCoordIndexInArray(coord, boardSize);
   const coordsOfNeighbours: Coord[] = [[x, y-1], [x+1, y], [x, y+1], [x-1, y]];
 
   coordsOfNeighbours.forEach((coord: Coord) => {
@@ -174,28 +171,34 @@ function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Color[]): Coord[] {
 return neighbours[Color.EMPTY];
 }
 
-const getNeighbourCoordsForGroup = () => {
-  
-}
+const getNeighborCoordsForMultipleCoords = (group: Coord[], board): Coord[][] => {
+  const neighbourCoordsForMultipleCoords: Coord[][] = [];
+  group.forEach((coord) => {
+    const coordNeighours: Coord[][] = getNeighbourCoordsGroupedByColor(coord, board);    
+    neighbourCoordsForMultipleCoords[Color.EMPTY] = coordNeighours[Color.EMPTY];
+    neighbourCoordsForMultipleCoords[Color.BLACK] = coordNeighours[Color.BLACK];
+    neighbourCoordsForMultipleCoords[Color.WHITE] = coordNeighours[Color.WHITE];
+  });
+  return neighbourCoordsForMultipleCoords;
+};
 
-function isSuicide(moveCoord: Coord, color: Color, board: Color[]) {
+function isLegitMove(moveCoord: Coord, color: Color, board: Color[]) {
   if (hasEmptyNeighbour(moveCoord, board) 
   //|| getCapturedGroups(moveCoord, color, board).length !== 0
   ) {
-      return false;
+      return true;
   }
   else {
-      let ownNeighbours = getOwnNeighours(moveCoord, color, board);
+      let ownNeighbours = getOwnNeighourCoords(moveCoord, color, board);
       const groups = getGroupsForStones(ownNeighbours, board);
       let result = true;
       groups.forEach((group) => {
-        if (getNeighbourCoordsForGroup()[Color.EMPTY].length < 1) {
-          result = false;
+        if (getNeighborCoordsForMultipleCoords(group, board)[Color.EMPTY].length < 1) {
+          result = true;
         }
       });
       return result;
   }
-  return true;
 }
 
-export {getIntersectionIndex, isSuicide, getNeighbourCoordsGroupedByColor};
+export {getCoordIndexInArray, getNeighborCoordsForMultipleCoords, isLegitMove, getNeighbourCoordsGroupedByColor};

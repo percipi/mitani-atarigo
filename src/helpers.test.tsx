@@ -1,8 +1,9 @@
 // import { render, screen } from '@testing-library/react';
 // import App from './App';
 
+import { Coord } from "./AtariGo";
 import { Color } from "./consts"
-import { getNeighbourCoordsGroupedByColor, isSuicide } from "./helpers"
+import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, isLegitMove } from "./helpers"
 
 // test('renders learn react link', () => {
 //   render(<App />);
@@ -17,6 +18,8 @@ import { getNeighbourCoordsGroupedByColor, isSuicide } from "./helpers"
 
 const {EMPTY, BLACK, WHITE} = Color;
 
+const coord00: Coord[] = [[0, 0]];
+
 const board1 = [
   BLACK, EMPTY,
   EMPTY, BLACK
@@ -27,7 +30,7 @@ const board1 = [
  * 02
  */
 
-const board2 = [
+const board2: Color[] = [
   BLACK, EMPTY,
   EMPTY, WHITE
 ]
@@ -46,6 +49,17 @@ test('getNeighbourCoordsGroupedByColor returns correct neighbours', () => {
   expect(coordsOfNeighbours[Color.WHITE].length).toBe(0);
 })
 
-test('isSuicide should return false when creates living group', () => {
-  expect(isSuicide([1,0], Color.BLACK, board2)).toBeFalsy();
+describe('isLegitMove function', () => {
+  it('should return false when creates living group', () => {
+    expect(isLegitMove([1,0], Color.BLACK, board2)).toBeTruthy();
+  })  
+})
+
+
+describe('getNeighborCoordsForMultipleCoords function', () => {
+  it('should return correct neighbour coords for correct input', () => {         
+    getNeighborCoordsForMultipleCoords(coord00, board1)
+  })
+
+  
 })

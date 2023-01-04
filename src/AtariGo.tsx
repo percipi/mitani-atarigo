@@ -2,14 +2,14 @@ import React from 'react';
 import './AtariGo.css';
 
 import {Intersection} from './Intersection';
-import {getIntersectionIndex, isSuicide} from './helpers';
+import {getCoordIndexInArray, isLegitMove} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
 export type ColorType = Color.EMPTY | Color.BLACK | Color.WHITE;
 
 type AtariGoState = {
   board: Color[],
-  isBlackTurn: boolean
+  currentColor: Color
 }
 
 export type Coord = [
@@ -24,7 +24,7 @@ class AtariGo extends React.Component {
     super(props);
     this.state = {
       board: Array(LINE_COUNT * LINE_COUNT).fill(Color.EMPTY),
-      isBlackTurn: true
+      currentColor: Color.BLACK
       };
   }
   
@@ -41,18 +41,14 @@ class AtariGo extends React.Component {
     const y = (i - x) / LINE_COUNT;
     return [x, y];
   }
-
-  #getCurrentColor(): ColorType {
-    return this.state.isBlackTurn ? Color.BLACK : Color.WHITE;
-  }
-
+ 
   putStone(this: AtariGo, coord: Coord) {
-    if (!isSuicide(coord, this.#getCurrentColor(), this.state.board)) {
-      const intersectionIndex = getIntersectionIndex(coord, LINE_COUNT);
+    if (isLegitMove(coord, this.state.currentColor, this.state.board)) {
+      const coordIndex = getCoordIndexInArray(coord, LINE_COUNT);
     
       this.setState({
-        board: this.state.board.map((coord, i)=> (i === intersectionIndex) ? this.state.isBlackTurn ? Color.BLACK : Color.WHITE: coord),
-        isBlackTurn: !this.state.isBlackTurn
+        board: this.state.board.map((coord, i)=> (i === coordIndex) ? this.state.currentColor: coord),
+        currentColor: this.state.currentColor === Color.BLACK ? Color.WHITE : Color.BLACK
       });
     } else {
       return null;

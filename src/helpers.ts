@@ -21,7 +21,7 @@ function isCoordInArray(el: Coord, arr: Coord[]) { // omega
   return false;
 }
 
-function getOwnNeighourCoords(coord, color, board): Coord[] {
+function getOwnNeighourCoords(coord: Coord, color: Color, board: Color[]): Coord[] {
   let r: ColorType[] = [];
 
  // let moku = board[getCoordIndexInArray(coord, SIZE)];
@@ -58,14 +58,15 @@ function getOwnNeighourCoords(coord, color, board): Coord[] {
 //   return res.length;
 // }
 
-const getBoardSize = (board) => Math.sqrt(board.length);
+const getBoardSize = (board: Color[]) => Math.sqrt(board.length);
 
-const getColorByCoord = (coord, board) => board[getCoordIndexInArray(coord, getBoardSize(board))];
+const getColorByCoord = (coord: Coord, board: Color[]) => 
+  board[getCoordIndexInArray(coord, getBoardSize(board))];
 
 function getGroup(coord: Coord, board: ColorType[]): Coord[] {
   ////console.log("getGroup...");
-  var _alreadyChecked = [],
-      addNeighbours = function (coord, alreadyChecked) {
+  var _alreadyChecked: Coord[] = [],
+      addNeighbours = function (coord: Coord, alreadyChecked: Coord[]) {
           ////console.log("addNeighbours... for stone:", moku);
           alreadyChecked.push(coord);
           var res = [coord];
@@ -154,7 +155,8 @@ function getNeighbourCoordsGroupedByColor(moveCoord: Coord, board: Color[]): Coo
 }
 
 
-const hasEmptyNeighbour = (moveCoord, board) => getCoordsOfEmptyNeighbours(moveCoord, board).length !== 0;
+const hasEmptyNeighbour = (moveCoord: Coord, board: Color[]) => 
+  getCoordsOfEmptyNeighbours(moveCoord, board).length !== 0;
 
 function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Color[]): Coord[] {
   var neighbours = getNeighbourCoordsGroupedByColor(moveCoord, board),
@@ -171,7 +173,7 @@ function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Color[]): Coord[] {
 return neighbours[Color.EMPTY];
 }
 
-const getNeighborCoordsForMultipleCoords = (group: Coord[], board): Coord[][] => {
+const getNeighborCoordsForMultipleCoords = (group: Coord[], board: Color[]): Coord[][] => {
   const neighbourCoordsForMultipleCoords: Coord[][] = [];
   group.forEach((coord) => {
     const coordNeighours: Coord[][] = getNeighbourCoordsGroupedByColor(coord, board);    

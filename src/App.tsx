@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import './App.css';
 
 import {Intersection} from './Intersection';
@@ -17,57 +17,43 @@ export type Coord = [
   number
 ];
 
-class App extends React.Component {   
-  readonly state: AtariGoState;
+function App() {     
+  const [gameState, setGameState]: [AtariGoState, Function]= useState({
+    board: Array(LINE_COUNT * LINE_COUNT).fill(Color.EMPTY),
+    currentColor: Color.BLACK
+    });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      board: Array(LINE_COUNT * LINE_COUNT).fill(Color.EMPTY),
-      currentColor: Color.BLACK
-      };
-  }
-  
-/**
- * Returns line position in pixels on x or y axis.
- */
+  const  {board, currentColor} = gameState;
 
-  getLinePositionByIndex(i: number): number{
-    return MARGIN  + i * GAP;
-  } 
-
-  getCoord(i: number): Coord {
-    const x = i % LINE_COUNT;
-    const y = (i - x) / LINE_COUNT;
-    return [x, y];
-  }
- 
-  putStone(this: AtariGo, coord: Coord) {
-    if (isLegitMove(coord, this.state.currentColor, this.state.board)) {
+  function handleClick(coord: Coord) {
+    if (isLegitMove(coord, currentColor, board)) {
       const coordIndex = getCoordIndexInArray(coord, LINE_COUNT);
     
-      this.setState({
-        board: this.state.board.map((coord, i)=> (i === coordIndex) ? this.state.currentColor: coord),
-        currentColor: this.state.currentColor === Color.BLACK ? Color.WHITE : Color.BLACK
+      setGameState({
+        board: board.map((coord, i)=> (i === coordIndex) ? currentColor: coord),
+        currentColor: currentColor === Color.BLACK ? Color.WHITE : Color.BLACK
       });
     } else {
       return null;
     }
   }
 
-  #renderIntersection(i: number, color: ColorType) {
-    return <Intersection onClick={(coord) => this.putStone(coord)} key={i} coord={this.getCoord(i)} color={color} />;
+  function renderIntersection(i: number, color: ColorType) {
+    return <Intersection onClick={(coord: Coord) => handleClick(coord)} 
+    key={i} 
+    coord={getCoord(i)} 
+    color={color} />;
   }
 
-  render() {
+  
     const horizontalLines = new Array(LINE_COUNT).fill(null).map(
       (a, i) => <line 
       className="line"
       key={i} 
       x1={MARGIN} 
       x2={MARGIN + LINE_LENGTH } 
-      y1={this.getLinePositionByIndex(i)} 
-      y2={this.getLinePositionByIndex(i)} 
+      y1={getLinePositionByIndex(i)} 
+      y2={getLinePositionByIndex(i)} 
       strokeWidth={LINE_WIDTH} 
       stroke="black"
       />);
@@ -76,15 +62,15 @@ class App extends React.Component {
       (a, i) => <line 
       className="line"
       key={i} 
-      x1={this.getLinePositionByIndex(i)} 
-      x2={this.getLinePositionByIndex(i)} 
+      x1={getLinePositionByIndex(i)} 
+      x2={getLinePositionByIndex(i)} 
       y1={MARGIN} 
       y2={MARGIN + LINE_LENGTH } 
       strokeWidth={LINE_WIDTH} 
       stroke="black"
       />);
   
-    const board = this.state.board.map((color , i) => this.#renderIntersection(i, color));
+    const renderedBoard = board.map((color , i) => renderIntersection(i, color));
   
     return (
       <div className="atarigo">
@@ -97,13 +83,27 @@ class App extends React.Component {
         >
         {horizontalLines}
         {verticalLines}
-        {board}
+        {renderedBoard}
         </svg>
         <div className='atarigo-info'>Następny ruch: czarny</div>
       </div>    
     );
-  }
   
+  
+}
+
+/**
+ * Returns line position in pixels on x or y axis.
+ */
+
+function getLinePositionByIndex(i: number): number{
+  return MARGIN  + i * GAP;
+} 
+
+function getCoord(i: number): Coord {
+  const x = i % LINE_COUNT;
+  const y = (i - x) / LINE_COUNT;
+  return [x, y];
 }
 
 export default App;

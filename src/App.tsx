@@ -5,20 +5,24 @@ import {Intersection} from './Intersection';
 import {getCoordIndexInArray, isLegitMove} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
-export type ColorType = Color.EMPTY | Color.BLACK | Color.WHITE;
-
-type AtariGoState = {
-  board: Color[],
-  currentColor: Color
-}
+export type ColorType = Color.BLACK | Color.WHITE | Color.EMPTY;
 
 export type Coord = [
   number,
   number
 ];
 
-function App() {     
-  const [gameState, setGameState]: [AtariGoState, Function]= useState({
+interface GameState {
+  board: Array<Color>,
+  currentColor: Color 
+}
+
+interface GameStateWithLastMove extends GameState {
+  coord: Coord
+}
+
+function App(): JSX.Element{     
+  const [gameState, setGameState]: [GameState, Function]= useState({
     board: Array(LINE_COUNT * LINE_COUNT).fill(Color.EMPTY),
     currentColor: Color.BLACK
     });
@@ -27,11 +31,9 @@ function App() {
 
   function handleClick(coord: Coord) {
     if (isLegitMove(coord, currentColor, board)) {
-      const coordIndex = getCoordIndexInArray(coord, LINE_COUNT);
-    
       setGameState({
-        board: board.map((coord, i)=> (i === coordIndex) ? currentColor: coord),
-        currentColor: currentColor === Color.BLACK ? Color.WHITE : Color.BLACK
+        board: getBoardAfterMove({board, coord, currentColor}),
+        currentColor: toggleColor(currentColor)
       });
     } else {
       return null;
@@ -104,6 +106,15 @@ function getCoord(i: number): Coord {
   const x = i % LINE_COUNT;
   const y = (i - x) / LINE_COUNT;
   return [x, y];
+}
+
+function getBoardAfterMove({board, coord, currentColor} : GameStateWithLastMove) {
+  const coordIndex = getCoordIndexInArray(coord, LINE_COUNT);
+  return board.map((coord, i)=> (i === coordIndex) ? currentColor: coord)
+}
+
+function toggleColor(currentColor: Color): Color {
+  return (currentColor - 1)^2;
 }
 
 export default App;

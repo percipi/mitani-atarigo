@@ -1,7 +1,7 @@
-enum Color {
-  EMPTY,
+enum Color {  
   BLACK,
-  WHITE
+  WHITE,
+  EMPTY
 };
 
 const SIZE = 300;

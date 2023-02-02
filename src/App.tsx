@@ -29,11 +29,11 @@ function App(): JSX.Element{
     });
 
   const  {board, currentColor} = gameState;
-
+  /
   function handleClick(coord: Coord) {
     if (isLegitMove(coord, currentColor, board)) {
       setGameState({
-        board: getBoardAfterMove({board, coord, currentColor}),
+        board: getBoardAfterMove({board, coord, currentColor}), // in this function we have to remove stones and change game state to finished
         currentColor: toggleColor(currentColor)
       });
     } else {
@@ -98,7 +98,6 @@ function App(): JSX.Element{
 /**
  * Returns line position in pixels on x or y axis.
  */
-
 function getLinePositionByIndex(i: number): number{
   return MARGIN  + i * GAP;
 } 
@@ -115,7 +114,7 @@ function getBoardAfterMove({board, coord, currentColor} : GameStateWithLastMove)
 }
 
 function toggleColor(currentColor: Color): Color {
-  return (currentColor - 1)^2;
+  return currentColor === Color.BLACK ? Color.WHITE : Color.BLACK;
 }
 
 export default App;

@@ -7,6 +7,7 @@ import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from '.
 
 export type ColorType = Color.BLACK | Color.WHITE | Color.EMPTY;
 
+// Tuple
 export type Coord = [
   number,
   number

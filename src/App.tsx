@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 
 import {Intersection} from './Intersection';
-import {getCoordIndexInArray, isLegitMove} from './helpers';
+import {getCoordIndexInArray, getMoveResult, toggleColor} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
 export type ColorType = Color.BLACK | Color.WHITE | Color.EMPTY;
@@ -13,12 +13,12 @@ export type Coord = [
   number
 ];
 
-interface GameState {
+export interface GameState {
   board: Array<Color>,
   currentColor: Color 
 }
 
-interface GameStateWithLastMove extends GameState {
+export interface GameStateWithLastMove extends GameState {
   coord: Coord
 }
 
@@ -29,9 +29,10 @@ function App(): JSX.Element{
     });
 
   const  {board, currentColor} = gameState;
-  /
+  
   function handleClick(coord: Coord) {
-    if (isLegitMove(coord, currentColor, board)) {
+    const moveResult = getMoveResult(coord, currentColor, board);
+    if (moveResult) {
       setGameState({
         board: getBoardAfterMove({board, coord, currentColor}), // in this function we have to remove stones and change game state to finished
         currentColor: toggleColor(currentColor)
@@ -43,7 +44,7 @@ function App(): JSX.Element{
 
   function renderIntersection(i: number, color: ColorType) {
     return <Intersection onClick={(coord: Coord) => handleClick(coord)} 
-    key={i} 
+    key={i}
     coord={getCoord(i)} 
     color={color} />;
   }
@@ -111,10 +112,6 @@ function getCoord(i: number): Coord {
 function getBoardAfterMove({board, coord, currentColor} : GameStateWithLastMove) {
   const coordIndex = getCoordIndexInArray(coord, LINE_COUNT);
   return board.map((coord, i)=> (i === coordIndex) ? currentColor: coord)
-}
-
-function toggleColor(currentColor: Color): Color {
-  return currentColor === Color.BLACK ? Color.WHITE : Color.BLACK;
 }
 
 export default App;

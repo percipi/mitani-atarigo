@@ -1,16 +1,9 @@
-import type {Coord, ColorType} from './App';
+import type {Coord, ColorType, GameStateWithLastMove} from './App';
 import {Color, SIZE} from './consts';
 
-// function getOppColor(color: Color): Color | -1{
-//   // TODO throw error if not stone
-//     if (color === Color.BLACK) {
-//       return Color.WHITE;
-//   }
-//   else if (color === Color.WHITE) {
-//       return Color.BLACK;
-//   }
-//   return -1;
-// }
+function toggleColor(currentColor: Color): Color {
+  return currentColor === Color.BLACK ? Color.WHITE : Color.BLACK;
+}
 
 function isCoordInArray(el: Coord, arr: Coord[]) { // omega
   for (var i = 0; i < arr.length; i++) {
@@ -100,26 +93,28 @@ function getGroupsForStones(coords: Coord[], board: Color[]): Coord[][]{
   return groups;
 }
 
-// function getCapturedGroups(coord: Coord, color: Color, board: Color[]): Color[][] {
-//   let oppColor = getOppColor(color);
-//     //moku = board[getCoordIndexInArray([x,y])];
-//   let groups = getGroupsForStones(board);
+function getCapturedGroups({coord, currentColor, board} : GameStateWithLastMove): Color[][] {
+  // let oppColor = toggleColor(color);
+  //   //moku = board[getCoordIndexInArray([x,y])];
+  // let groups = getGroupsForStones(board);
 
-//   if (groups[oppColor].length === 0) {
-//       return [];
-//   }
-//   else {
-//       let capturedGroups: Color[][] = [];      
-//       let neighbours: Color[] = getNeighbours(coord, board);
+  // if (groups[oppColor].length === 0) {
+  //     return [];
+  // }
+  // else {
+  //     let capturedGroups: Color[][] = [];      
+  //     let neighbours: Color[] = getNeighbours(coord, board);
 
-//       for (var i=0; i<neighbours.length; i++){
-//           if (neighbours[i].color === oppColor && getGroup(neighbours[i]).length === 1) {
-//               capturedGroups.push(getGroup(neighbours[i]));
-//           }
-//       }
-//   return capturedGroups;
-//   }
-// }
+  //     for (var i=0; i<neighbours.length; i++){
+  //         if (neighbours[i].color === oppColor && getGroup(neighbours[i]).length === 1) {
+  //             capturedGroups.push(getGroup(neighbours[i]));
+  //         }
+  //     }
+  // return capturedGroups;
+  // }
+
+  return [];
+}
 
 function getCoordIndexInArray([x, y]: Coord, boardSize: number): number {
   return y * boardSize + x;
@@ -184,7 +179,7 @@ const getNeighborCoordsForMultipleCoords = (group: Coord[], board: Color[]): Coo
   return neighbourCoordsForMultipleCoords;
 };
 
-function isLegitMove(moveCoord: Coord, color: Color, board: Color[]) {
+function getMoveResult(moveCoord: Coord, color: Color, board: Color[]) {
   if (hasEmptyNeighbour(moveCoord, board) 
   //|| getCapturedGroups(moveCoord, color, board).length !== 0
   ) {
@@ -203,4 +198,11 @@ function isLegitMove(moveCoord: Coord, color: Color, board: Color[]) {
   }
 }
 
-export {getCoordIndexInArray, getNeighborCoordsForMultipleCoords, isLegitMove, getNeighbourCoordsGroupedByColor};
+export {
+  getCapturedGroups,
+  getCoordIndexInArray, 
+  getNeighborCoordsForMultipleCoords, 
+  getMoveResult, 
+  getNeighbourCoordsGroupedByColor,
+  toggleColor
+};

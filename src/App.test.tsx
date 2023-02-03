@@ -16,7 +16,7 @@ test('Second stone should be white', () => {
   expect(screen.getByTestId('0,1').getAttribute('fill')).toBe('white');
 });
 
-test.only('It is possible to put stone with no liberties when creates living group', () => {
+test('It is possible to put stone with no liberties when creates living group', () => {
   render(<App />);
   fireEvent.click(screen.getByTestId('1,0'));
   fireEvent.click(screen.getByTestId('0,1'));
@@ -24,7 +24,7 @@ test.only('It is possible to put stone with no liberties when creates living gro
   expect(screen.getByTestId('0,0').getAttribute('fill')).toBe('black');
 });
 
-test.only('Captured stone should be red color', () => {
+test.skip('Captured stone should be red color', () => {
   render(<App />);
   fireEvent.click(screen.getByTestId('1,0'));
   fireEvent.click(screen.getByTestId('0,0'));

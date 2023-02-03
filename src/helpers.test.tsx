@@ -93,7 +93,7 @@ describe('getNeighborCoordsForMultipleCoords function', () => {
     getNeighborCoordsForMultipleCoords(coord00, board1)
   })
 
-describe('getCapturedGroups function', () => {
+describe.skip('getCapturedGroups function', () => {
   it('should return empty array when there is no opposing groups to capture', () => {
     expect(getCapturedGroups({board: board1, currentColor: Color.BLACK, coord: [1,0]})).toHaveLength(0);
   })

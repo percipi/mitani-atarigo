@@ -93,7 +93,7 @@ function getGroupsForStones(coords: Coord[], board: Color[]): Coord[][]{
   return groups;
 }
 
-function getCapturedGroups({coord, currentColor, board} : GameStateWithLastMove): Color[][] {
+function getCapturedGroups({coord, currentColor, board} : GameStateWithLastMove): Array<Coord> {
   // let oppColor = toggleColor(color);
   //   //moku = board[getCoordIndexInArray([x,y])];
   // let groups = getGroupsForStones(board);

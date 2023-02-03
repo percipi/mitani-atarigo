@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { expect, test } from 'vitest';
 import App from './App';
-import { Color } from './consts';
 
 test('First stone should be black', () => {
   render(<App />);

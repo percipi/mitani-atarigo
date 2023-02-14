@@ -2,16 +2,13 @@ import { useState } from 'react';
 import './App.css';
 
 import {Intersection} from './Intersection';
-import {getCoordIndexInArray, getMoveResult, toggleColor} from './helpers';
+import {arrayToCoord, getCoordIndexInArray, getMoveResult, toggleColor} from './helpers';
 import { Color, MARGIN, GAP, LINE_COUNT, LINE_LENGTH, LINE_WIDTH, SIZE } from './consts';
 
 export type ColorType = Color.BLACK | Color.WHITE | Color.EMPTY;
 
 // Tuple
-export type Coord = [
-  number,
-  number
-];
+export type Coord = `${number},${number}`;
 
 export interface GameState {
   board: Array<Color>,
@@ -106,7 +103,7 @@ function getLinePositionByIndex(i: number): number{
 function getCoord(i: number): Coord {
   const x = i % LINE_COUNT;
   const y = (i - x) / LINE_COUNT;
-  return [x, y];
+  return arrayToCoord([x, y]);
 }
 
 function getBoardAfterMove({board, coord, currentColor} : GameStateWithLastMove) {

@@ -15,22 +15,7 @@ function isCoordInArray(el: Coord, arr: Coord[]) { // omega
 }
 
 function getOwnNeighourCoords(coord: Coord, color: Color, board: Color[]): Coord[] {
-  let r: ColorType[] = [];
-
- // let moku = board[getCoordIndexInArray(coord, SIZE)];
-  let neighbours = getNeighbourCoordsGroupedByColor(coord, board);
-//   neighbours.forEach((neighbour) => {
-//     if (neighbour.color === color) {
-//         r.push(neighbour);
-//     }
-// }
-//     );
-//   for (var i = 0; i< neighbours.length; i++){
-//       if (color === neighbours[i].color){
-//           r.push(neighbours[i]);
-//       }
-//   }
-  return neighbours[color];
+  return getNeighbourCoordsGroupedByColor(coord, board)[color];
 }
 
 // function getNoGroupLiberties(group) {
@@ -57,9 +42,15 @@ const getColorByCoord = (coord: Coord, board: Color[]) =>
   board[getCoordIndexInArray(coord, getBoardSize(board))];
 
 function getGroup(coord: Coord, board: ColorType[]): Coord[] {
+  
+  if (getColorByCoord(coord, board) === Color.EMPTY) {
+    throw Error('There is no stone on provided coords');
+  }
+
   ////console.log("getGroup...");
-  var _alreadyChecked: Coord[] = [],
-      addNeighbours = function (coord: Coord, alreadyChecked: Coord[]) {
+  let _alreadyChecked: Coord[] = [];
+  
+  function addNeighbours(coord: Coord, alreadyChecked: Coord[]) {
           ////console.log("addNeighbours... for stone:", moku);
           alreadyChecked.push(coord);
           var res = [coord];
@@ -74,6 +65,7 @@ function getGroup(coord: Coord, board: ColorType[]): Coord[] {
           
           return res;
       };
+
   var group = addNeighbours(coord, _alreadyChecked);
   return group;
 }
@@ -93,10 +85,10 @@ function getGroupsForStones(coords: Coord[], board: Color[]): Coord[][]{
   return groups;
 }
 
-function getCapturedGroups({coord, currentColor, board} : GameStateWithLastMove): Array<Coord> {
-  // let oppColor = toggleColor(color);
+function getCapturedStones({coord, currentColor, board} : GameStateWithLastMove): Array<Coord> {
+  let oppColor = toggleColor(currentColor);
   //   //moku = board[getCoordIndexInArray([x,y])];
-  // let groups = getGroupsForStones(board);
+  //  let groups = getGroupsForStones(board);
 
   // if (groups[oppColor].length === 0) {
   //     return [];
@@ -116,15 +108,17 @@ function getCapturedGroups({coord, currentColor, board} : GameStateWithLastMove)
   return [];
 }
 
-function getCoordIndexInArray([x, y]: Coord, boardSize: number): number {
+function getCoordIndexInArray(coord: Coord, boardSize: number): number {
+  const [x,y] = coordToArray(coord);
   return y * boardSize + x;
 }
 
-function getIntersectionColorByCoord([x,y]: Coord, board: Color[]): Color | -1 {
+function getIntersectionColorByCoord(coord: Coord, board: Color[]): Color | -1 {
+  const [x,y] = coordToArray(coord);
   const boardSize: number = Math.sqrt(board.length);
 
   if ((x >= 0) && (y >= 0) && (x < boardSize) && (y < boardSize)) {
-      return board[getCoordIndexInArray([x,y], boardSize)];
+      return board[getCoordIndexInArray(arrayToCoord([x,y]), boardSize)];
   }
   return -1;
 }
@@ -132,12 +126,14 @@ function getIntersectionColorByCoord([x,y]: Coord, board: Color[]): Color | -1 {
 // return neighbours by color
 // write unit tests
 function getNeighbourCoordsGroupedByColor(moveCoord: Coord, board: Color[]): Coord[][] {
-  const result: Coord[][]= [[],[],[]],
-  x = moveCoord[0],
-  y = moveCoord[1];
+  const result: Coord[][] = [[],[],[]];
+  const [x,y] = coordToArray(moveCoord);
   // boardSize = Math.sqrt(board.length);
   //getIntersectionIndexForBoard = (coord: Coord): number => getCoordIndexInArray(coord, boardSize);
-  const coordsOfNeighbours: Coord[] = [[x, y-1], [x+1, y], [x, y+1], [x-1, y]];
+  
+  const arrayOfNeighbours: Array<[number, number]> = [[x, y-1], [x+1, y], [x, y+1], [x-1, y]];
+  const coordsOfNeighbours: Coord[] = arrayOfNeighbours.map(arrayToCoord);
+
 
   coordsOfNeighbours.forEach((coord: Coord) => {
     let color = getIntersectionColorByCoord(coord, board);
@@ -181,7 +177,7 @@ const getNeighborCoordsForMultipleCoords = (group: Coord[], board: Color[]): Coo
 
 function getMoveResult(moveCoord: Coord, color: Color, board: Color[]) {
   if (hasEmptyNeighbour(moveCoord, board) 
-  //|| getCapturedGroups(moveCoord, color, board).length !== 0
+  //|| getCapturedStones(moveCoord, color, board).length !== 0
   ) {
       return true;
   }
@@ -198,10 +194,21 @@ function getMoveResult(moveCoord: Coord, color: Color, board: Color[]) {
   }
 }
 
+function arrayToCoord([x,y]: [number, number]): Coord {
+  return `${x},${y}`;
+}
+
+function coordToArray(coord: Coord): [number, number]{
+  return coord.split(',').map(Number) as [number, number];
+}
 export {
-  getCapturedGroups,
+  arrayToCoord,
+  coordToArray,  
+  getCapturedStones,
   getCoordIndexInArray, 
+  getGroup,
   getNeighborCoordsForMultipleCoords, 
+  getOwnNeighourCoords,
   getMoveResult, 
   getNeighbourCoordsGroupedByColor,
   toggleColor

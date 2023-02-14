@@ -4,7 +4,7 @@
 import { describe, expect, it, test } from "vitest";
 import { Coord } from "./App";
 import { Color } from "./consts"
-import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, getMoveResult, getCapturedGroups } from "./helpers"
+import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, getMoveResult, getCapturedStones, getOwnNeighourCoords, getGroup } from "./helpers"
 
 // test('renders learn react link', () => {
 //   render(<App />);
@@ -17,8 +17,6 @@ import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, g
  * +B
  */
 const {BLACK, WHITE, EMPTY} = Color;
-
-const coord00: Coord[] = [[0, 0]];
 
 const board1 = [
   BLACK, EMPTY,
@@ -65,52 +63,75 @@ const board5: Color[] = [
 
 describe('getNeighbourCoordsGroupedByColor function', () => {
   test('returns empty result', () => {
-    const coordsOfNeighbours = getNeighbourCoordsGroupedByColor([0,0],[Color.EMPTY]);
-    //expect(coordsOfNeighbours[Color.EMPTY].length).toBe(0);
+    const coordsOfNeighbours = getNeighbourCoordsGroupedByColor('0,0', [Color.EMPTY]);    
     expect(coordsOfNeighbours[Color.BLACK].length).toBe(0);
     expect(coordsOfNeighbours[Color.WHITE].length).toBe(0);
   })
   
   test('returns correct neighbours', () => {
-    const coordsOfNeighbours = getNeighbourCoordsGroupedByColor([1,0], board1);
+    const coordsOfNeighbours = getNeighbourCoordsGroupedByColor('1,0', board1);
     expect(coordsOfNeighbours[Color.EMPTY].length).toBe(0);
     expect(coordsOfNeighbours[Color.BLACK].length).toBe(2);
     expect(coordsOfNeighbours[Color.WHITE].length).toBe(0);
   })
 })
 
-
+describe('getOwnNeighourCoords function', () => {
+  it('should return empty array when there is no own neighbours', () => {
+    const coordsOfOwnNeighbours = getOwnNeighourCoords('0,0', Color.BLACK, board1);    
+    expect(coordsOfOwnNeighbours.length).toBe(0);
+    expect(coordsOfOwnNeighbours.length).toBe(0);
+  })
+  
+  test('returns correct neighbours', () => {
+    const coordsOfOwnNeighbours = getOwnNeighourCoords('0,0', Color.BLACK, board4);
+    expect(coordsOfOwnNeighbours).toEqual(['0,1']);    
+  })
+})
 
 describe('getMoveResult function', () => {
   it('should return false when creates living group', () => {
-    expect(getMoveResult([1,0], Color.BLACK, board2)).toBeTruthy();
+    expect(getMoveResult('1,0', Color.BLACK, board2)).toBeTruthy();
   })  
 })
 
-
-describe('getNeighborCoordsForMultipleCoords function', () => {
-  it('should return correct neighbour coords for correct input', () => {         
-    getNeighborCoordsForMultipleCoords(coord00, board1)
+describe('getGroup function', () => {
+  it('should return empty array when given coordinate is not occupied by stone', () => {
+    expect(() => getGroup('0,1', board1)).toThrowError('There is no stone on provided coords');
   })
 
-describe.skip('getCapturedGroups function', () => {
-  it('should return empty array when there is no opposing groups to capture', () => {
-    expect(getCapturedGroups({board: board1, currentColor: Color.BLACK, coord: [1,0]})).toHaveLength(0);
+  it('should return input coord it has no neighbours', () => {
+    expect(getGroup('0,0', board1)).toEqual(['0,0']);
   })
 
-  it('should return the captured stone when there is only one opposing stone to capture', () => {
-    expect(getCapturedGroups({board: board3, currentColor: Color.BLACK, coord: [1,1]})).toEqual([[1,0]]);
-  })
-
-  it('should return the captured stones when there is only one group to capture', () => {
-    expect(getCapturedGroups({board: board4, currentColor: Color.WHITE, coord: [1,1]})).toEqual([[0,0], [0,1]]);
-  })
-
-  it('should return the captured stones when there is many groups to capture', () => {
-    expect(getCapturedGroups({board: board5, currentColor: Color.WHITE, coord: [0,2]})).toEqual([[0,0], [0,1], [1,2], [2,2]]);
+  it('should return coorect group of coordinates for a given coordinate on the board', () => {
+    expect(getGroup('0,1', board4)).toEqual(['0,0','0,1'])
   })
 })
 
-// write more getCapturedGroups tests
+describe('getNeighborCoordsForMultipleCoords function', () => {
+  it('should return correct neighbour coords for correct input', () => {         
+    getNeighborCoordsForMultipleCoords(['0,0'], board1)
+  })
+
+describe.skip('getCapturedStones function', () => {
+  it('should return empty array when there is no opposing groups to capture', () => {
+    expect(getCapturedStones({board: board1, currentColor: Color.BLACK, coord: '1,0'})).toHaveLength(0);
+  })
+
+  it('should return the captured stone when there is only one opposing stone to capture', () => {
+    expect(getCapturedStones({board: board3, currentColor: Color.BLACK, coord: '1,1'})).toEqual(['1,0']);
+  })
+
+  it('should return the captured stones when there is only one group to capture', () => {
+    expect(getCapturedStones({board: board4, currentColor: Color.WHITE, coord: '1,1'})).toEqual(['0,0', '0,1']);
+  })
+
+  it('should return the captured stones when there is many groups to capture', () => {
+    expect(getCapturedStones({board: board5, currentColor: Color.WHITE, coord: '0,2'})).toEqual(['0,0', '0,1', [1,2], [2,2]]);
+  })
+})
+
+// write more getCapturedStones tests
   
 })

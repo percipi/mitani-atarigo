@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { expect, test } from 'vitest';
 import App from './App';
 
-describe.skip('Game e2e tests', () => {
+describe('Game e2e tests', () => {
   test('First stone should be black', () => {
     render(<App />);
     fireEvent.click(screen.getByTestId('1,1'));
@@ -24,7 +24,7 @@ describe.skip('Game e2e tests', () => {
     expect(screen.getByTestId('0,0').getAttribute('fill')).toBe('black');
   });
   
-  test('Captured stone should be red color', () => {
+  test.skip('Captured stone should be red color', () => {
     render(<App />);
     fireEvent.click(screen.getByTestId('1,0'));
     fireEvent.click(screen.getByTestId('0,0'));

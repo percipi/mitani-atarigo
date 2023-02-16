@@ -2,9 +2,8 @@
 // import App from './App';
 
 import { describe, expect, it, test } from "vitest";
-import { Coord } from "./App";
 import { Color } from "./consts"
-import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, getMoveResult, getCapturedStones, getOwnNeighourCoords, getGroup } from "./helpers"
+import { getNeighborCoordsForMultipleCoords, getNeighbourCoordsGroupedByColor, getMoveResult, getCapturedStones, getOwnNeighourCoords, getGroup, isEqual } from "./helpers"
 
 // test('renders learn react link', () => {
 //   render(<App />);
@@ -101,17 +100,17 @@ describe('getGroup function', () => {
   })
 
   it('should return input coord it has no neighbours', () => {
-    expect(getGroup('0,0', board1)).toEqual(['0,0']);
+    expect(isEqual(getGroup('0,0', board1), new Set(['0,0']))).toBe(true);
   })
 
   it('should return coorect group of coordinates for a given coordinate on the board', () => {
-    expect(getGroup('0,1', board4)).toEqual(['0,0','0,1'])
+    expect(isEqual(getGroup('0,1', board4), new Set(['0,0','0,1']))).toBe(true)
   })
 })
 
 describe('getNeighborCoordsForMultipleCoords function', () => {
   it('should return correct neighbour coords for correct input', () => {         
-    getNeighborCoordsForMultipleCoords(['0,0'], board1)
+    getNeighborCoordsForMultipleCoords(new Set(['0,0']), board1)
   })
 
 describe.skip('getCapturedStones function', () => {

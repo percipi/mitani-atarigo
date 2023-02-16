@@ -41,39 +41,47 @@ const getBoardSize = (board: Color[]) => Math.sqrt(board.length);
 const getColorByCoord = (coord: Coord, board: Color[]) => 
   board[getCoordIndexInArray(coord, getBoardSize(board))];
 
-function getGroup(coord: Coord, board: ColorType[]): Coord[] {
+function getGroup(coord: Coord, board: ColorType[]): Set<Coord> {
   
   if (getColorByCoord(coord, board) === Color.EMPTY) {
     throw Error('There is no stone on provided coords');
   }
 
   ////console.log("getGroup...");
-  let _alreadyChecked: Coord[] = [];
+  let checkedCoordArray: Set<Coord> = new Set();
   
-  function addNeighbours(coord: Coord, alreadyChecked: Coord[]) {
+  function _getGroup(coord: Coord): Set<Coord>{
           ////console.log("addNeighbours... for stone:", moku);
-          alreadyChecked.push(coord);
-          var res = [coord];
-          var n = getOwnNeighourCoords(coord, getColorByCoord(coord, board), board);
+          checkedCoordArray.add(coord);
+          let temporaryGroup = new Set([coord]);
+          var neighbourOwnStones = getOwnNeighourCoords(coord, getColorByCoord(coord, board), board);
           ////console.log("addNeighbours... getOwnNeighourCoords:", n);
-          for (var i = 0; i < n.length; i++) {
-              if (!isCoordInArray(n[i], alreadyChecked)) {
-                  res = res.concat(addNeighbours(n[i], alreadyChecked));
-              }
-          }
+          
+          neighbourOwnStones.forEach((neighbourOwnStone) => {
+            if (!checkedCoordArray.has(neighbourOwnStone)) {
+              temporaryGroup = union(temporaryGroup, _getGroup(neighbourOwnStone))
+            }
+          })
+          
+          // for (var i = 0; i < n.length; i++) {
+          //     if (!isCoordInArray(n[i], checkedCoordArray)) {
+          //         res = res.concat(_getGroup(n[i]));
+          //     }
+          // }
           ////console.log("addNeighbours... result:", res);
           
-          return res;
+          return temporaryGroup;
       };
 
-  var group = addNeighbours(coord, _alreadyChecked);
+  let group = _getGroup(coord);
+
   return group;
 }
 
 //returns array of groups which contains stones passed as argument
-function getGroupsForStones(coords: Coord[], board: Color[]): Coord[][]{  
+function getGroupsForStones(coords: Coord[], board: Color[]): Set<Coord>[]{  
   var _alreadyInGroups: Coord[] = [];
-  var groups: Coord[][] = [];
+  var groups: Set<Coord>[] = [];
   for (var i = 0; i < coords.length; i++) {
       if (!isCoordInArray(coords[i], _alreadyInGroups)) {
           var group = getGroup(coords[i], board);
@@ -164,7 +172,7 @@ function getCoordsOfEmptyNeighbours(moveCoord: Coord, board: Color[]): Coord[] {
 return neighbours[Color.EMPTY];
 }
 
-const getNeighborCoordsForMultipleCoords = (group: Coord[], board: Color[]): Coord[][] => {
+const getNeighborCoordsForMultipleCoords = (group: Set<Coord>, board: Color[]): Coord[][] => {
   const neighbourCoordsForMultipleCoords: Coord[][] = [];
   group.forEach((coord) => {
     const coordNeighours: Coord[][] = getNeighbourCoordsGroupedByColor(coord, board);    
@@ -201,9 +209,32 @@ function arrayToCoord([x,y]: [number, number]): Coord {
 function coordToArray(coord: Coord): [number, number]{
   return coord.split(',').map(Number) as [number, number];
 }
+
+function union(setA: Set<any>, setB: Set<any>) {
+  const _union = new Set(setA);
+  for (const elem of setB) {
+    _union.add(elem);
+  }
+  return _union;
+}
+
+function isSuperset(set: Set<any>, subset:Set<any>) {
+  for (const elem of subset) {
+    if (!set.has(elem)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isEqual(setA: Set<any>, setB: Set<any>) {
+  return isSuperset(setA, setB) && isSuperset(setB, setA);
+}
+
 export {
   arrayToCoord,
-  coordToArray,  
+  coordToArray, 
+  isEqual,
   getCapturedStones,
   getCoordIndexInArray, 
   getGroup,
